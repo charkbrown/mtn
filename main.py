@@ -103,6 +103,8 @@ def run_one_epoch(sess, model, batch_data, summary_writer, ds_handler, epoch_num
     if score_type_index == 0:
         mae = np.mean(abs(np.subtract(y_pred_list, y_real_list)))
         rmse = np.sqrt(np.mean(np.subtract(y_pred_list, y_real_list) ** 2))
+        
+        y_real_mean = np.mean(y_real_list)
 
         real_mae_summary = tf.Summary()
         real_mae_summary.value.add(tag='real_mae', simple_value=mae)
@@ -111,7 +113,7 @@ def run_one_epoch(sess, model, batch_data, summary_writer, ds_handler, epoch_num
         real_rmse_summary = tf.Summary()
         real_rmse_summary.value.add(tag='real_rmse', simple_value=rmse)
         summary_writer.add_summary(real_rmse_summary, epoch_num)
-        return loss, mae, rmse
+        return loss, mae, rmse ,  y_real_mean
     else:
         rse = calc_rse(y_real_list, y_pred_list)
         corr = calc_corr(y_real_list, y_pred_list)
