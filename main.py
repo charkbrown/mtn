@@ -117,6 +117,8 @@ def run_one_epoch(sess, model, batch_data, summary_writer, ds_handler, epoch_num
     else:
         rse = calc_rse(y_real_list, y_pred_list)
         corr = calc_corr(y_real_list, y_pred_list)
+        y_real_mean = np.mean(y_real_list)
+
 
         real_rse_summary = tf.Summary()
         real_rse_summary.value.add(tag='real_rse', simple_value=rse)
@@ -125,7 +127,7 @@ def run_one_epoch(sess, model, batch_data, summary_writer, ds_handler, epoch_num
         real_corr_summary = tf.Summary()
         real_corr_summary.value.add(tag='real_corr', simple_value=corr)
         summary_writer.add_summary(real_corr_summary, epoch_num)
-        return loss, corr, rse
+        return loss, corr, rse,  y_real_mean
 
 
 def run_one_config(config):
@@ -173,12 +175,12 @@ def run_one_config(config):
             run_one_epoch(sess, model, train_batch_data, train_writer, ds_handler, i, True)
             # evaluate
             if i % 5 == 0:
-                loss, scope1, score2 = run_one_epoch(sess, model, valid_batch_data, test_writer, ds_handler, i, False)
+                loss, scope1, score2, score3 = run_one_epoch(sess, model, valid_batch_data, test_writer, ds_handler, i, False)
                 if best_score > score2:
                     best_score = score2
                     # save model
                     saver.save(sess, model_path)
-                    print('Epoch', i, 'Test Loss:', loss, score1_name,':', scope1, score2_name, ':', score2)
+                    print('Epoch', i, 'Test Loss:', loss, score1_name,':', scope1, score2_name, ':', score2, 'average:', score3)
 
         print('---------Best score:', score2_name, ':', best_score)
 
