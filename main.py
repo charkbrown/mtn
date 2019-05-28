@@ -131,7 +131,7 @@ def run_one_epoch(sess, model, batch_data, summary_writer, ds_handler, epoch_num
 
 
 def run_one_config(config):
-    epochs = 100
+    epochs = 300
 
     # learning rate decay
     max_lr = 0.003
